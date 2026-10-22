@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="hero">
+    <h1>Office Hours Sign-Up</h1>
+    {% if g.user %}
+      {% if g.is_admin %}
+        <p>You're the administrator, so you can see who booked each slot.</p>
+      {% else %}
+        <p>Pick a free half-hour slot. You can cancel your own booking any time.</p>
+      {% endif %}
+    {% else %}
+      <p>Nobody is logged in. Create an account or log in to reserve a time.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="{{ url_for('register') }}">Create an account</a>
+        <a class="btn btn-ghost" href="{{ url_for('login') }}">Log in</a>
+      </div>
+    {% endif %}
+  </section>
+
+  {% if g.user %}
+    <div class="sheet">
+      <div class="sheet-grid">
+        <div class="sheet-corner"></div>
+        {% for day in days %}
+          <div class="sheet-day">{{ day }}</div>
+        {% endfor %}
+
+        {% for row in sheet %}
+          <div class="sheet-time">{{ row.label }}</div>
+          {% for cell in row.cells %}
+            <div class="slot slot-{{ cell.status }}">
+              <span class="slot-when">{{ days[cell.day] }}, {{ row.label }}</span>
+              {% if cell.status == "free" %}
+                <form action="{{ url_for('book') }}" method="post">
+                  <input type="hidden" name="day" value="{{ cell.day }}">
+                  <input type="hidden" name="start_time" value="{{ cell.start_time }}">
+                  <button class="btn btn-primary slot-btn" type="submit">Book</button>
+                </form>
+              {% elif cell.status == "mine" %}
+                <span class="slot-status">Your booking</span>
+                <form action="{{ url_for('cancel') }}" method="post">
+                  <input type="hidden" name="day" value="{{ cell.day }}">
+                  <input type="hidden" name="start_time" value="{{ cell.start_time }}">
+                  <button class="btn btn-ghost slot-btn" type="submit">Cancel</button>
+                </form>
+              {% else %}
+                <span class="slot-status">{{ cell.name or "Taken" }}</span>
+              {% endif %}
+            </div>
+          {% endfor %}
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}

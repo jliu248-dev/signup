@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Register · Office Hours{% endblock %}
+
+{% block content %}
+  <div class="card">
+    <h1>Create an account</h1>
+    <p class="subtitle">Pick a username and password to get started.</p>
+    <form method="post">
+      <div class="field">
+        <label for="username">Username</label>
+        <input name="username" id="username" autocomplete="username" required autofocus>
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password" autocomplete="new-password" required>
+      </div>
+      <button class="btn btn-primary btn-block" type="submit">Register</button>
+    </form>
+    <p class="card-footer">Already have an account? <a href="{{ url_for('login') }}">Log in</a></p>
+  </div>
+{% endblock %}
